@@ -13,6 +13,7 @@
 #include <string>
 #include <random>
 #include <iostream>
+#include <cmath>
 
 constexpr float CELL_SIZE = 2.0f;
 //I use unusual marks to help me understand the maze layout:
@@ -167,15 +168,16 @@ PlayMode::PlayMode() : scene(*flashlight_scene) {
 			}
 			else if (tile == 'G') {
 				scene.transforms.emplace_back();
-				Scene::Transform *goal = &scene.transforms.back();
+				goal = &scene.transforms.back();
 				goal->name = "RuntimeGoal";
 				goal->position = player_start_position + glm::vec3(cell.x * CELL_SIZE, cell.y * CELL_SIZE, 0.0f);
 				goal->rotation = goal_template->rotation;
 				goal->scale = goal_template->scale;
 				goal->parent = goal_template->parent;
 				scene.drawables.emplace_back(goal);
-				scene.drawables.back().pipeline =
-					goal_drawable_template->pipeline;
+				scene.drawables.back().pipeline = goal_drawable_template->pipeline;
+				goal_start_position = goal->position;
+				goal_start_rotation = goal->rotation;
 			}
 		}
 	}
@@ -324,6 +326,13 @@ void PlayMode::update(float elapsed) {
 		down.pressed = false;
 		left.pressed = false;
 		right.pressed = false;
+	}
+
+	//make the goal float up and down and rotate:
+	animation_time += elapsed;
+	if (goal != nullptr) {
+		goal->position.z = goal_start_position.z + 0.3f * std::sin(animation_time * 2.0f);
+		goal->rotation = goal_start_rotation * glm::angleAxis(animation_time, glm::vec3(0.0f, 0.0f, 1.0f));
 	}
 }
 

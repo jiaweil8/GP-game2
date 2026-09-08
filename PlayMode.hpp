@@ -39,6 +39,7 @@ struct PlayMode : Mode {
 	//local copy of the game scene (so code can change it during gameplay):
 	Scene scene;
 	Scene::Transform *player = nullptr;
+	Scene::Transform *goal = nullptr;
 	//use cell coordinates to track player position in the maze:
 	enum class Cell {
 		Empty,
@@ -51,7 +52,10 @@ struct PlayMode : Mode {
 	Cell get_cell(glm::ivec2 cell);
 	glm::ivec2 player_map_pos = glm::ivec2(-1, -1);
 
-
+	//animation
+	glm::vec3 goal_start_position;
+	glm::quat goal_start_rotation;
+	float animation_time = 0.0f;
 	
 	//camera:
 	Scene::Camera *camera = nullptr;
